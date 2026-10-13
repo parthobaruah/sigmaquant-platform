@@ -20,8 +20,7 @@ The system is designed to decouple market data ingestion, pricing derivation, ri
 
 The platform follows a decoupled, event-driven architecture designed to process quote updates while enforcing pre-trade risk controls and deterministic state recovery.
 
-```
-[ NSE Market Data Feeds / TBT ]
+\[ NSE Market Data Feeds / TBT ]
                │
                ▼
    [ Market Data Ingestion ]
@@ -45,8 +44,7 @@ The platform follows a decoupled, event-driven architecture designed to process 
                            │
                            ▼
           [ Live Exchange / Dummy Simulator ]
-```
-
+\
 ---
 
 ## 3. Core Modules
@@ -84,14 +82,24 @@ The platform follows a decoupled, event-driven architecture designed to process 
 ## 4. Platform Interface & Telemetry
 
 ### 4.1. Strategy Execution Terminal
-The execution terminal monitors active strategy daemons, real-time order lifecycle status, execution latencies, and service connectivity.
+The execution terminal monitors active strategy daemons, real-time order lifecycle status, execution latencies, and service connectivity across multi-timeframe bot engines.
 
 ![Strategy Execution Terminal](assets/terminal.png)
 
 ### 4.2. Market Regime & Zone Mapper
-The zone mapper evaluates underlying market structure, dynamic volatility expansion zones, and trend confirmation parameters.
+The zone mapper evaluates underlying market structure, cumulative volume delta (CVD), volume profile point of control (POC), dynamic volatility expansion zones, and institutional support/resistance pivots.
 
 ![Market Regime and Zone Mapper](assets/zone_mapper.png)
+
+### 4.3. Cash Market Momentum Desk (Model CM Sigma)
+Automated multi-sector equity derivative basket execution with 4-second token multiplexing, dynamic strike selection across 210 F&O underlyings, and automated staggered tranche profit booking.
+
+![Cash Market Momentum - Model CM Sigma](assets/cm_momentum_sigma.png)
+
+### 4.4. Cash Market Momentum Desk (Model F • OI Breakout)
+Pre-market and intraday Open Interest (OI) breakout desk tracking contract tokens, dynamic strike target/stop limits, and end-of-day risk reconciliation.
+
+![Cash Market Momentum - Model F OI Breakout](assets/cm_momentum_model_f.png)
 
 ---
 
