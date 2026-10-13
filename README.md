@@ -20,31 +20,63 @@ The system is designed to decouple market data ingestion, pricing derivation, ri
 
 The platform follows a decoupled, event-driven architecture designed to process quote updates while enforcing pre-trade risk controls and deterministic state recovery.
 
-\[ NSE Market Data Feeds / TBT ]
-               │
-               ▼
-   [ Market Data Ingestion ]
-   (AsyncIO Token Polling / 50-Token Multiplexing)
-               │
-               ▼
-     [ In-Memory Cache ] <───> [ Contract Resolution Engine ]
-     (Redis Pub/Sub & Key-Value)   (38,000+ Active NSE Master Book)
-               │
-               ├─────────────────────────┐
-               ▼                         ▼
-   [ Option Pricing Engine ]   [ Risk Management System (RMS) ]
-   (Theoreticals, IV, Greeks)   (Delta, Vega, Gamma, Margin Limits)
-               │                         │
-               └───────────┬─────────────┘
-                           ▼
-              [ Strategy Execution Daemons ]
-                           │
-                           ▼
-           [ Trade Server / Execution Gateway ]
-                           │
-                           ▼
-          [ Live Exchange / Dummy Simulator ]
-\
+```mermaid
+flowchart TD
+    A["NSE Market Data Feeds / TBT"] --> B["Market Data Ingestion<br/>(AsyncIO Token Polling / 50-Token Multiplexing)"]
+    B --> C["In-Memory State Cache<br/>(Redis Pub/Sub & Key-Value)"]
+    C <--> D["Contract Resolution Engine<br/>(38,000+ Active NSE Master Book)"]
+    C --> E["Option Pricing Engine<br/>(Theoreticals, IV, Greeks)"]
+    C --> F["Risk Management System - RMS<br/>(Delta, Vega, Gamma, Margin Limits)"]
+    E --> G["Strategy Execution Daemons"]
+    F --> G
+    G --> H["Trade Server / Execution Gateway"]
+    H --> I["Live Exchange / Simulator"]
+```
+
+```text
++---------------------------------------------------------------+
+|                  NSE Market Data Feeds / TBT                  |
++---------------------------------------------------------------+
+                               |
+                               v
++---------------------------------------------------------------+
+|                    Market Data Ingestion                      |
+|        (AsyncIO Token Polling / 50-Token Multiplexing)        |
++---------------------------------------------------------------+
+                               |
+                               v
++-----------------------------+     +---------------------------+
+|    In-Memory State Cache    | <-> |    Contract Resolution    |
+| (Redis Pub/Sub & Key-Value) |     |  (38,000+ Active Master)  |
++-----------------------------+     +---------------------------+
+               |                                  |
+               +----------------------------------+
+                               |
+               +---------------+---------------+
+               v                               v
++-----------------------------+ +-------------------------------+
+|    Option Pricing Engine    | |    Risk Management (RMS)      |
+|  (Theoreticals, IV, Greeks) | |  (Delta, Vega, Gamma, Limits) |
++-----------------------------+ +-------------------------------+
+               |                               |
+               +---------------+---------------+
+                               |
+                               v
++---------------------------------------------------------------+
+|                 Strategy Execution Daemons                    |
++---------------------------------------------------------------+
+                               |
+                               v
++---------------------------------------------------------------+
+|              Trade Server / Execution Gateway                 |
++---------------------------------------------------------------+
+                               |
+                               v
++---------------------------------------------------------------+
+|                Live Exchange / Dummy Simulator                |
++---------------------------------------------------------------+
+```
+
 ---
 
 ## 3. Core Modules
